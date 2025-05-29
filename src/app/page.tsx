@@ -40,10 +40,10 @@ export default function HomePage() {
                 />
                 <div className="absolute inset-0 bg-black/60 z-10"></div> {/* Overlay */}
                 <div className="relative z-20 p-6">
-                    <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 leading-tight">
+                    <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 leading-tight font-playfair">
                         Capturando Momentos, Criando Memórias
                     </h1>
-                    <p className="text-lg md:text-xl text-gray-200 mb-8 max-w-2xl mx-auto">
+                    <p className="text-lg md:text-xl text-gray-200 mb-8 max-w-2xl mx-auto font-playfair">
                         Fotografia profissional que conta a sua história com paixão e arte.
                     </p>
                     <Link

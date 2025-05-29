@@ -21,3 +21,12 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+/* globals.css */
+.font-playfair {
+    font-family: var(--font-playfair);
+  }
+
+  .font-inter {
+    font-family: var(--font-inter);
+  }
+  

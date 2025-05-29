@@ -1,7 +1,11 @@
+// Galeria de fotos com filtros, infinite scroll, carrossel no modal, compartilhamento e upload dinâmico
+
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState, useCallback, useRef } from "react";
 import Image from "next/image";
+import { motion, AnimatePresence } from "framer-motion";
+import { FaArrowLeft, FaArrowRight, FaFacebook, FaTwitter, FaWhatsapp } from "react-icons/fa";
 
 interface Photo {
   id: number;
@@ -12,122 +16,167 @@ interface Photo {
   height: number;
 }
 
-const photos: Photo[] = [
-  { id: 1, src: '/gallery/cardinal.jpg', alt: 'Cardeal Vermelho em um galho', category: 'Pássaros', width: 1920, height: 1280 },
-  { id: 2, src: '/gallery/fallow.jpg', alt: 'Gamo em um campo', category: 'Animais', width: 1280, height: 1920 },
-  { id: 3, src: '/gallery/lion.jpg', alt: 'Leão majestoso', category: 'Animais Selvagens', width: 1920, height: 1080 },
-  { id: 4, src: '/gallery/puffin.jpg', alt: 'Puffin em uma rocha', category: 'Aves Marinhas', width: 1080, height: 1920 },
-  { id: 5, src: '/gallery/squirrel.jpg', alt: 'Esquilo em um tronco de árvore', category: 'Pequenos Animais', width: 1920, height: 1280 },
-  { id: 6, src: '/gallery/fotografo.jpg', alt: 'Fotógrafo em ação', category: 'Pessoas', width: 1280, height: 1920 },
-  { id: 7, src: '/gallery/cardinal.jpg', alt: 'Fotógrafo em ação', category: 'Casamento', width: 1280, height: 1920 },
-  { id: 8, src: '/gallery/lion.jpg', alt: 'Fotógrafo em ação', category: 'Casamento', width: 1280, height: 1920 },
-  { id: 9, src: '/gallery/bride.jpg', alt: 'Fotógrafo em ação', category: 'Casamento', width: 1280, height: 1920 },
-  { id: 10, src: '/gallery/bride2.jpg', alt: 'Fotógrafo em ação', category: 'Casamento', width: 1280, height: 1920 },
-  { id: 11, src: '/gallery/shoes.jpg', alt: 'Fotógrafo em ação', category: 'Casamento', width: 1280, height: 1920 },
-  { id: 12, src: '/gallery/wedding.jpg', alt: 'Fotógrafo em ação', category: 'Casamento', width: 1280, height: 1920 },
-  { id: 13, src: '/gallery/cake.jpg', alt: 'Fotógrafo em ação', category: 'Casamento', width: 1280, height: 1920 },
-  { id: 15, src: '/gallery/flowers.jpg', alt: 'Fotógrafo em ação', category: 'Casamento', width: 1280, height: 1920 },
-  { id: 16, src: '/gallery/love.jpg', alt: 'Fotógrafo em ação', category: 'Casamento', width: 1280, height: 1920 },
-  { id: 17, src: '/gallery/newlyweds.jpg', alt: 'Fotógrafo em ação', category: 'Formatura', width: 1280, height: 1920 },
-  { id: 18, src: '/gallery/party.jpg', alt: 'Fotógrafo em ação', category: 'Casamento', width: 1280, height: 1920 },
-  { id: 19, src: '/gallery/shoes (2).jpg', alt: 'Fotógrafo em ação', category: 'Casamento', width: 1280, height: 1920 },
-  { id: 20, src: '/gallery/wedding22.jpg', alt: 'Fotógrafo em ação', category: 'Casamento', width: 1280, height: 1920 },
-  { id: 21, src: '/gallery/love.jpg', alt: 'Fotógrafo em ação', category: 'Casamento', width: 1280, height: 1920 },
-  { id: 22, src: '/gallery/wedding.jpg', alt: 'Fotógrafo em ação', category: 'Casamento', width: 1280, height: 1920 },
-  { id: 23, src: '/gallery/love.jpg', alt: 'Fotógrafo em ação', category: 'Casamento', width: 1280, height: 1920 },
-  { id: 24, src: '/gallery/flowers.jpg', alt: 'Fotógrafo em ação', category: 'Casamento', width: 1280, height: 1920 },
-  { id: 25, src: '/gallery/wedding22.jpg', alt: 'Fotógrafo em ação', category: 'Casamento', width: 1280, height: 1920 },
-  { id: 26, src: '/gallery/shoes.jpg', alt: 'Fotógrafo em ação', category: 'Casamento', width: 1280, height: 1920 },
-  { id: 27, src: '/gallery/cake.jpg', alt: 'Fotógrafo em ação', category: 'Casamento', width: 1280, height: 1920 },
-  { id: 28, src: '/gallery/newlyweds.jpg', alt: 'Fotógrafo em ação', category: 'Casamento', width: 1280, height: 1920 }, 
-  { id: 29, src: '/gallery/fotografo.jpg', alt: 'Fotógrafo em ação', category: 'Casamento', width: 1280, height: 1920 },
-  { id: 30, src: '/gallery/love.jpg', alt: 'Fotógrafo em ação', category: 'Casamento', width: 1280, height: 1920 },
-];
+const PHOTOS: Photo[] = [
+    { id: 1, src: '/gallery/cardinal.jpg', alt: 'Cardeal vermelho em um galho', category: 'Pássaros', width: 1920, height: 1280 },
+    { id: 2, src: '/gallery/fallow.jpg', alt: 'Gamo em um campo', category: 'Animais', width: 1280, height: 1920 },
+    { id: 3, src: '/gallery/lion.jpg', alt: 'Leão majestoso', category: 'Animais Selvagens', width: 1920, height: 1080 },
+    { id: 4, src: '/gallery/puffin.jpg', alt: 'Puffin em uma rocha', category: 'Aves Marinhas', width: 1080, height: 1920 },
+    { id: 5, src: '/gallery/squirrel.jpg', alt: 'Esquilo em um tronco de árvore', category: 'Pequenos Animais', width: 1920, height: 1280 },
+    { id: 6, src: '/gallery/fotografo.jpg', alt: 'Fotógrafo em ação', category: 'Pessoas', width: 1280, height: 1920 },
+    { id: 7, src: '/gallery/cardinal.jpg', alt: 'Casamento - detalhe do ambiente', category: 'Casamento', width: 1280, height: 1920 },
+    { id: 8, src: '/gallery/lion.jpg', alt: 'Casamento - paisagem e emoção', category: 'Casamento', width: 1280, height: 1920 },
+    { id: 9, src: '/gallery/bride.jpg', alt: 'Noiva sorrindo', category: 'Casamento', width: 1280, height: 1920 },
+    { id: 10, src: '/gallery/bride2.jpg', alt: 'Noiva com vestido branco', category: 'Casamento', width: 1280, height: 1920 },
+    { id: 11, src: '/gallery/shoes.jpg', alt: 'Sapatos de casamento', category: 'Casamento', width: 1280, height: 1920 },
+    { id: 12, src: '/gallery/wedding.jpg', alt: 'Casal no altar', category: 'Casamento', width: 1280, height: 1920 },
+    { id: 13, src: '/gallery/cake.jpg', alt: 'Bolo de casamento', category: 'Casamento', width: 1280, height: 1920 },
+    { id: 15, src: '/gallery/flowers.jpg', alt: 'Arranjo de flores para casamento', category: 'Casamento', width: 1280, height: 1920 },
+    { id: 16, src: '/gallery/love.jpg', alt: 'Casal apaixonado', category: 'Casamento', width: 1280, height: 1920 },
+    { id: 17, src: '/gallery/newlyweds.jpg', alt: 'Recém-casados celebrando', category: 'Formatura', width: 1280, height: 1920 },
+    { id: 18, src: '/gallery/party.jpg', alt: 'Festa de casamento', category: 'Casamento', width: 1280, height: 1920 },
+    { id: 19, src: '/gallery/shoes (2).jpg', alt: 'Sapatos femininos em detalhe', category: 'Casamento', width: 1280, height: 1920 },
+    { id: 20, src: '/gallery/wedding22.jpg', alt: 'Momento especial no casamento', category: 'Casamento', width: 1280, height: 1920 },
+    { id: 21, src: '/gallery/love.jpg', alt: 'Olhares apaixonados', category: 'Casamento', width: 1280, height: 1920 },
+    { id: 22, src: '/gallery/wedding.jpg', alt: 'Altar decorado para o casamento', category: 'Casamento', width: 1280, height: 1920 },
+    { id: 23, src: '/gallery/love.jpg', alt: 'Casal sorrindo', category: 'Casamento', width: 1280, height: 1920 },
+    { id: 24, src: '/gallery/flowers.jpg', alt: 'Flores do buquê', category: 'Casamento', width: 1280, height: 1920 },
+    { id: 25, src: '/gallery/wedding22.jpg', alt: 'Detalhes da cerimônia', category: 'Casamento', width: 1280, height: 1920 },
+    { id: 26, src: '/gallery/shoes.jpg', alt: 'Sapatos no tapete', category: 'Casamento', width: 1280, height: 1920 },
+    { id: 27, src: '/gallery/cake.jpg', alt: 'Bolo decorado', category: 'Casamento', width: 1280, height: 1920 },
+    { id: 28, src: '/gallery/newlyweds.jpg', alt: 'Casal feliz na saída da cerimônia', category: 'Casamento', width: 1280, height: 1920 },
+    { id: 29, src: '/gallery/fotografo.jpg', alt: 'Fotógrafo captando emoções', category: 'Casamento', width: 1280, height: 1920 },
+    { id: 30, src: '/gallery/love.jpg', alt: 'Casal apaixonado durante a cerimônia', category: 'Casamento', width: 1280, height: 1920 },
+  ];
+
+const ITEMS_PER_PAGE = 12;
 
 export default function GalleryPage() {
-  const [selectedImage, setSelectedImage] = useState<Photo | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string>("Todas");
+  const [visibleItems, setVisibleItems] = useState<number>(ITEMS_PER_PAGE);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
-  const openModal = (photo: Photo) => {
-    setSelectedImage(photo);
-    document.body.style.overflow = 'hidden';
-  };
+  const observer = useRef<IntersectionObserver | null>(null);
+  const lastItemRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      if (observer.current) observer.current.disconnect();
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting) {
+          setVisibleItems((prev) => prev + ITEMS_PER_PAGE);
+        }
+      });
+      if (node) observer.current.observe(node);
+    },
+    []
+  );
 
-  const closeModal = () => {
-    setSelectedImage(null);
-    document.body.style.overflow = 'auto';
-  };
+  const categories = useMemo(() => ["Todas", ...Array.from(new Set(PHOTOS.map((p) => p.category)))], []);
+
+  const filteredPhotos = useMemo(() =>
+    selectedCategory === "Todas" ? PHOTOS : PHOTOS.filter((p) => p.category === selectedCategory),
+    [selectedCategory]
+  );
+
+  const visiblePhotos = filteredPhotos.slice(0, visibleItems);
 
   useEffect(() => {
     document.title = "Galeria | Joel Pontes Fotografias";
   }, []);
 
+  const openModal = (index: number) => {
+    setSelectedIndex(index);
+    document.body.style.overflow = "hidden";
+  };
+
+  const closeModal = () => {
+    setSelectedIndex(null);
+    document.body.style.overflow = "auto";
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (selectedIndex === null) return;
+    if (e.key === "ArrowRight") setSelectedIndex((i) => (i! + 1) % filteredPhotos.length);
+    if (e.key === "ArrowLeft") setSelectedIndex((i) => (i! - 1 + filteredPhotos.length) % filteredPhotos.length);
+    if (e.key === "Escape") closeModal();
+  };
+
+  const shareUrl = (photo: Photo) => encodeURIComponent(window.location.href + "#" + photo.id);
+
   return (
-    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <main className="container mx-auto px-4 py-16" onKeyDown={handleKeyDown} tabIndex={0}>
       <header className="text-center mb-12">
-        <h1 className="text-5xl sm:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-pink-500 drop-shadow">
-          Galeria de Fotos
-        </h1>
-        <p className="mt-4 text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto">
-          Explore uma coleção visual dos meus melhores trabalhos.
-        </p>
+        <h1 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-pink-500">Galeria de Fotos</h1>
       </header>
 
-      <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-6">
-        {photos.map((photo) => (
-          <div
-            key={photo.id}
-            className="group mb-6 break-inside-avoid overflow-hidden rounded-xl shadow-lg bg-neutral-900 hover:shadow-xl hover:shadow-orange-500/30 transition-all transform hover:scale-[1.02] cursor-pointer"
-            onClick={() => openModal(photo)}
+      <div className="flex flex-wrap justify-center gap-2 mb-8">
+        {categories.map((cat) => (
+          <button
+            key={cat}
+            onClick={() => {
+              setSelectedCategory(cat);
+              setVisibleItems(ITEMS_PER_PAGE);
+            }}
+            className={`px-4 py-2 rounded-full border text-sm font-medium ${
+              selectedCategory === cat ? "bg-orange-500 text-white" : "bg-neutral-800 text-gray-300"
+            }`}
           >
-            <Image
-              src={photo.src}
-              alt={photo.alt}
-              width={photo.width}
-              height={photo.height}
-              className="w-full h-auto object-cover group-hover:opacity-80 transition-opacity duration-300"
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-              onError={(e) => {
-                console.error(`Erro ao carregar imagem: ${photo.src}`, e);
-              }}
-            />
-            <div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/70 to-transparent text-white text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              {photo.category}
-            </div>
-          </div>
+            {cat}
+          </button>
         ))}
-        {photos.length === 0 && (
-          <p className="text-center text-gray-400 col-span-full">Nenhuma foto para exibir no momento.</p>
-        )}
       </div>
 
-      {/* Modal */}
-      {selectedImage && (
-        <div
-          className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-50 p-4"
-          onClick={closeModal}
-        >
-          <div
-            className="relative bg-neutral-900 rounded-lg p-4 shadow-2xl max-w-5xl max-h-[90vh] w-full"
-            onClick={(e) => e.stopPropagation()}
-          >
+      <section className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-6">
+        <AnimatePresence>
+          {visiblePhotos.map((photo, i) => {
+            const { id, ...imageProps } = photo;
+            return (
+                <motion.div
+                key={photo.id}
+                ref={i === visiblePhotos.length - 1 ? lastItemRef : undefined}
+                layout
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                className="group relative mb-6 break-inside-avoid overflow-hidden rounded-xl shadow-md bg-neutral-900 hover:shadow-orange-500/30 hover:scale-[1.02] transition-all cursor-pointer"
+                onClick={() => openModal(i)}
+              >
+                <Image
+                  {...imageProps}
+                  className="w-full h-auto object-cover"
+                  sizes="(max-width: 640px) 100vw, 50vw"
+                />
+                <div className="absolute bottom-0 left-0 p-2 bg-black/50 text-white text-xs w-full text-center">
+                  {photo.category}
+                </div>
+              </motion.div>
+              
+            );
+          })}
+        </AnimatePresence>
+      </section>
+
+      {selectedIndex !== null && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4" onClick={closeModal}>
+          <div className="relative max-w-5xl w-full" onClick={(e) => e.stopPropagation()}>
             <Image
-              src={selectedImage.src}
-              alt={selectedImage.alt}
-              width={selectedImage.width}
-              height={selectedImage.height}
-              className="object-contain max-w-full max-h-[80vh] rounded"
+              src={filteredPhotos[selectedIndex].src}
+              alt={filteredPhotos[selectedIndex].alt}
+              width={filteredPhotos[selectedIndex].width}
+              height={filteredPhotos[selectedIndex].height}
+              className="rounded max-h-[80vh] mx-auto"
             />
-            <button
-              onClick={closeModal}
-              className="absolute top-2 right-2 text-white bg-gray-800 hover:bg-gray-700 rounded-full p-2 text-xl"
-              aria-label="Fechar"
-            >
-              &times;
-            </button>
-            <p className="text-center text-gray-300 mt-3 text-sm px-2">{selectedImage.alt}</p>
+            <div className="absolute top-4 right-4 flex gap-3">             
+              
+              <a href={`https://wa.me/?text=${shareUrl(filteredPhotos[selectedIndex])}`} target="_blank" rel="noopener noreferrer"><FaWhatsapp className="text-white text-xl" /></a>
+            </div>
+            <button className="absolute top-4 left-4 text-white text-2xl" onClick={() => setSelectedIndex((i) => (i! - 1 + filteredPhotos.length) % filteredPhotos.length)}><FaArrowLeft /></button>
+            <button className="absolute top-4 right-16 text-white text-2xl" onClick={() => setSelectedIndex((i) => (i! + 1) % filteredPhotos.length)}><FaArrowRight /></button>
+            <button onClick={closeModal} className="absolute top-4 right-0 text-white text-xl">&times;</button>
           </div>
         </div>
       )}
-    </div>
+
+      
+    </main>
   );
 }

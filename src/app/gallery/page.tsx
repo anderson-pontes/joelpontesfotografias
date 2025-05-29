@@ -126,7 +126,7 @@ export default function GalleryPage() {
             <section className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-6">
                 <AnimatePresence>
                     {visiblePhotos.map((photo, i) => {
-                        const { id, ...imageProps } = photo;
+                        const { id: _id, ...imageProps } = photo;
                         return (
                             <motion.div
                                 key={photo.id}

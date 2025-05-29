@@ -1,94 +1,93 @@
 // app/gallery/page.tsx
-"use client"; // Necessário para useState e manipulação de eventos no cliente
+"use client";
 
-import { useState } from 'react';
-import Image from 'next/image';
-// import type { Metadata } from 'next'; // Metadata em client components é diferente, geralmente definido no page.tsx pai ou layout se estático, ou via generateMetadata se dinâmico no servidor. Para simplicidade, o título virá do layout.tsx ou pode ser setado no document.title via useEffect.
+import { useEffect, useState } from "react";
+import Image from "next/image";
 
-// Exemplo de dados da galeria (substitua pelas suas imagens e dados)
-// Coloque as imagens na pasta /public/gallery/ por exemplo
 interface Photo {
   id: number;
-  src: string; // Caminho relativo a /public
+  src: string;
   alt: string;
   category: string;
-  width: number; // Largura original da imagem
-  height: number; // Altura original da imagem
+  width: number;
+  height: number;
 }
 
 const photos: Photo[] = [
-  { id: 1, src: '/gallery/photo1.jpg', alt: 'Descrição da Foto 1', category: 'Paisagem', width: 1920, height: 1280 },
-  { id: 2, src: '/gallery/photo2.jpg', alt: 'Descrição da Foto 2', category: 'Retrato', width: 1280, height: 1920 },
-  { id: 3, src: '/gallery/photo3.jpg', alt: 'Descrição da Foto 3', category: 'Paisagem', width: 1920, height: 1080 },
-  { id: 4, src: '/gallery/photo4.jpg', alt: 'Descrição da Foto 4', category: 'Evento', width: 1080, height: 1920 },
-  { id: 5, src: '/gallery/photo5.jpg', alt: 'Descrição da Foto 5', category: 'Retrato', width: 1920, height: 1280 },
-  { id: 6, src: '/gallery/photo6.jpg', alt: 'Descrição da Foto 6', category: 'Natureza', width: 1280, height: 1920 },
-  // Adicione mais fotos...
+  { id: 1, src: '/gallery/cardinal.jpg', alt: 'Cardeal Vermelho em um galho', category: 'Pássaros', width: 1920, height: 1280 },
+  { id: 2, src: '/gallery/fallow.jpg', alt: 'Gamo em um campo', category: 'Animais', width: 1280, height: 1920 },
+  { id: 3, src: '/gallery/lion.jpg', alt: 'Leão majestoso', category: 'Animais Selvagens', width: 1920, height: 1080 },
+  { id: 4, src: '/gallery/puffin.jpg', alt: 'Puffin em uma rocha', category: 'Aves Marinhas', width: 1080, height: 1920 },
+  { id: 5, src: '/gallery/squirrel.jpg', alt: 'Esquilo em um tronco de árvore', category: 'Pequenos Animais', width: 1920, height: 1280 },
+  { id: 6, src: '/gallery/fotografo.jpg', alt: 'Fotógrafo em ação', category: 'Pessoas', width: 1280, height: 1920 },
+  { id: 7, src: '/gallery/cardinal.jpg', alt: 'Fotógrafo em ação', category: 'Casamento', width: 1280, height: 1920 },
+  { id: 8, src: '/gallery/lion.jpg', alt: 'Fotógrafo em ação', category: 'Casamento', width: 1280, height: 1920 },
 ];
-
 
 export default function GalleryPage() {
   const [selectedImage, setSelectedImage] = useState<Photo | null>(null);
 
   const openModal = (photo: Photo) => {
     setSelectedImage(photo);
-    document.body.style.overflow = 'hidden'; // Impede scroll do body quando modal aberto
+    document.body.style.overflow = 'hidden';
   };
 
   const closeModal = () => {
     setSelectedImage(null);
-    document.body.style.overflow = 'auto'; // Restaura scroll do body
+    document.body.style.overflow = 'auto';
   };
 
-  // Opcional: Definir título da página dinamicamente em Client Components
-  // useEffect(() => {
-  //   document.title = "Galeria | Nome do Fotógrafo";
-  // }, []);
+  useEffect(() => {
+    document.title = "Galeria | Joel Pontes Fotografias";
+  }, []);
 
   return (
-    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
       <header className="text-center mb-12">
-        <h1 className="text-4xl font-bold text-white sm:text-5xl">
+        <h1 className="text-5xl sm:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-pink-500 drop-shadow">
           Galeria de Fotos
         </h1>
-        <p className="mt-4 text-xl text-gray-300">
-          Explore uma coleção dos meus melhores trabalhos.
+        <p className="mt-4 text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto">
+          Explore uma coleção visual dos meus melhores trabalhos.
         </p>
       </header>
 
-      {/* Galeria de Fotos - Usando CSS Grid com Masonry (simples) */}
-      <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-4 sm:gap-6 lg:gap-8">
+      <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-6">
         {photos.map((photo) => (
           <div
             key={photo.id}
-            className="group mb-4 sm:mb-6 lg:mb-8 break-inside-avoid bg-dark-surface rounded-lg overflow-hidden shadow-xl cursor-pointer transform transition-all duration-300 hover:shadow-orange-500/30 hover:shadow-2xl hover:scale-[1.02]"
+            className="group mb-6 break-inside-avoid overflow-hidden rounded-xl shadow-lg bg-neutral-900 hover:shadow-xl hover:shadow-orange-500/30 transition-all transform hover:scale-[1.02] cursor-pointer"
             onClick={() => openModal(photo)}
           >
             <Image
               src={photo.src}
               alt={photo.alt}
-              width={photo.width} // Fornecer dimensões ajuda Next/Image a evitar CLS
+              width={photo.width}
               height={photo.height}
               className="w-full h-auto object-cover group-hover:opacity-80 transition-opacity duration-300"
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+              onError={(e) => {
+                console.error(`Erro ao carregar imagem: ${photo.src}`, e);
+              }}
             />
-            <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-end p-4">
-              <p className="text-white text-sm opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
-                {photo.category}
-              </p>
+            <div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/70 to-transparent text-white text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              {photo.category}
             </div>
           </div>
         ))}
+        {photos.length === 0 && (
+          <p className="text-center text-gray-400 col-span-full">Nenhuma foto para exibir no momento.</p>
+        )}
       </div>
 
-      {/* Modal/Lightbox Simples */}
+      {/* Modal */}
       {selectedImage && (
         <div
-          className="fixed inset-0 bg-black/90 flex items-center justify-center z-[100] p-4"
+          className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-50 p-4"
           onClick={closeModal}
         >
           <div
-            className="relative bg-dark-card p-2 sm:p-4 rounded-lg shadow-2xl max-w-4xl max-h-[90vh] w-auto h-auto"
+            className="relative bg-neutral-900 rounded-lg p-4 shadow-2xl max-w-5xl max-h-[90vh] w-full"
             onClick={(e) => e.stopPropagation()}
           >
             <Image
@@ -96,17 +95,16 @@ export default function GalleryPage() {
               alt={selectedImage.alt}
               width={selectedImage.width}
               height={selectedImage.height}
-              className="object-contain max-w-full max-h-[80vh] sm:max-h-[85vh] rounded"
-              // quality={90} // Pode ajustar a qualidade para o lightbox
+              className="object-contain max-w-full max-h-[80vh] rounded"
             />
             <button
               onClick={closeModal}
-              className="absolute top-2 right-2 md:top-3 md:right-3 text-white bg-gray-800/70 hover:bg-gray-700 rounded-full p-2 text-2xl leading-none z-[101]"
+              className="absolute top-2 right-2 text-white bg-gray-800 hover:bg-gray-700 rounded-full p-2 text-xl"
               aria-label="Fechar"
             >
               &times;
             </button>
-            <p className="text-center text-gray-300 mt-2 text-sm px-2">{selectedImage.alt}</p>
+            <p className="text-center text-gray-300 mt-3 text-sm px-2">{selectedImage.alt}</p>
           </div>
         </div>
       )}

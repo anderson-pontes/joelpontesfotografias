@@ -4,10 +4,8 @@ const Footer = () => {
     return (
       <footer className="bg-dark-card text-gray-400 py-8 mt-16">
         <div className="container mx-auto px-6 text-center">
-          <p>&copy; {currentYear} Nome do Fotógrafo. Todos os direitos reservados.</p>
-          <p className="mt-2 text-sm">
-            Criado com ❤️ e Next.js
-          </p>
+          <p>&copy; {currentYear} AlphaBit IA. Todos os direitos reservados.</p>
+         
         </div>
       </footer>
     );

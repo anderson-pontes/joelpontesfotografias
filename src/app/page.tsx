@@ -11,9 +11,9 @@ export const metadata: Metadata = {
 };
 
 const heroImageUrl = '/images/fotografo.jpg';
-const teaserImage1Url = '/images/cardinal.jpg';
-const teaserImage2Url = '/images/fallow.jpg';
-const teaserImage3Url = '/images/lion.jpg';
+const teaserImage1Url = '/images/love.jpg';
+const teaserImage2Url = '/images/wedding.jpg';
+const teaserImage3Url = '/images/wedding22.jpg';
 
 
 export default function HomePage() {

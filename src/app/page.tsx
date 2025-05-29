@@ -3,7 +3,7 @@ import Image from 'next/image';
 import type { Metadata } from 'next';
 
 
-import { CameraIcon, UserCircleIcon, EnvelopeIcon } from '@heroicons/react/24/outline';
+import { CameraIcon, UserCircleIcon } from '@heroicons/react/24/outline';
 
 export const metadata: Metadata = {
     title: 'Início | Joel Pontes',

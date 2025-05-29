@@ -1,16 +1,14 @@
-// app/layout.tsx
 import type { Metadata } from "next";
 import { Inter } from "next/font/google"; 
 import { Playfair_Display } from "next/font/google";
 import "./globals.css";
-import Navbar from "../../_components/NavBar"; // Usando alias de importação '@/'
+import Navbar from "../../_components/NavBar"; 
 import Footer from "../../_components/Footer";
 
-// Configuração da fonte (opcional, mas bom para performance)
 const inter = Inter({
   subsets: ["latin"],
   display: 'swap',
-  variable: '--font-inter', // Para usar no tailwind.config.ts
+  variable: '--font-inter', 
 });
 
 const playfair = Playfair_Display({
@@ -21,11 +19,10 @@ const playfair = Playfair_Display({
   
 
 export const metadata: Metadata = {
-  title: "Joel Pontes | Profissional", // Título padrão
+  title: "Joel Pontes | Profissional", 
   description: "Portfólio e galeria de um fotógrafo profissional.",
-  // Adicione mais metadados aqui, como openGraph, icons etc.
   icons: {
-    icon: '/favicon.ico', // Certifique-se de que favicon.ico está na pasta public ou app
+    icon: '/favicon.ico', 
   }
 };
 

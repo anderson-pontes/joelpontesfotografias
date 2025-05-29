@@ -15,7 +15,7 @@ const Navbar = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
         <Link
           href="/"
-          className="text-2xl sm:text-3xl font-bold text-white hover:text-gray-300 transition-colors"
+          className="text-2xl sm:text-3xl font-bold hover:text-gray-300 transition-colors text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-pink-500"
           onClick={closeMenu}
         >
           Joel Pontes Fotografias

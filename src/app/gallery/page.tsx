@@ -104,7 +104,7 @@ export default function GalleryPage() {
     return (
         <main className="container mx-auto px-4 py-16" onKeyDown={handleKeyDown} tabIndex={0}>
             <header className="text-center mb-12">
-                <h1 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-pink-500">Galeria de Fotos</h1>
+                <h1 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-pink-500">Galeria de Fotos</h1>
             </header>
 
             <div className="flex flex-wrap justify-center gap-2 mb-8">
@@ -115,7 +115,7 @@ export default function GalleryPage() {
                             setSelectedCategory(cat);
                             setVisibleItems(ITEMS_PER_PAGE);
                         }}
-                        className={`px-4 py-2 rounded-full border text-sm font-medium ${selectedCategory === cat ? "bg-orange-500 text-white" : "bg-neutral-800 text-gray-300"
+                        className={`px-4 py-2 rounded-full border text-sm font-medium ${selectedCategory === cat ? "bg-violet-500 text-white" : "bg-neutral-800 text-gray-300"
                             }`}
                     >
                         {cat}
@@ -136,7 +136,7 @@ export default function GalleryPage() {
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0 }}
                                 transition={{ duration: 0.3 }}
-                                className="group relative mb-6 break-inside-avoid overflow-hidden rounded-xl shadow-md bg-neutral-900 hover:shadow-orange-500/30 hover:scale-[1.02] transition-all cursor-pointer"
+                                className="group relative mb-6 break-inside-avoid overflow-hidden rounded-xl shadow-md bg-neutral-900 hover:shadow-violet-500/30 hover:scale-[1.02] transition-all cursor-pointer"
                                 onClick={() => openModal(i)}
                             >
                                 <Image

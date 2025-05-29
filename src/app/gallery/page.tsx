@@ -156,25 +156,78 @@ export default function GalleryPage() {
       </section>
 
       {selectedIndex !== null && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4" onClick={closeModal}>
-          <div className="relative max-w-5xl w-full" onClick={(e) => e.stopPropagation()}>
-            <Image
-              src={filteredPhotos[selectedIndex].src}
-              alt={filteredPhotos[selectedIndex].alt}
-              width={filteredPhotos[selectedIndex].width}
-              height={filteredPhotos[selectedIndex].height}
-              className="rounded max-h-[80vh] mx-auto"
-            />
-            <div className="absolute top-4 right-4 flex gap-3">             
-              
-              <a href={`https://wa.me/?text=${shareUrl(filteredPhotos[selectedIndex])}`} target="_blank" rel="noopener noreferrer"><FaWhatsapp className="text-white text-xl" /></a>
-            </div>
-            <button className="absolute top-4 left-4 text-white text-2xl" onClick={() => setSelectedIndex((i) => (i! - 1 + filteredPhotos.length) % filteredPhotos.length)}><FaArrowLeft /></button>
-            <button className="absolute top-4 right-16 text-white text-2xl" onClick={() => setSelectedIndex((i) => (i! + 1) % filteredPhotos.length)}><FaArrowRight /></button>
-            <button onClick={closeModal} className="absolute top-4 right-0 text-white text-xl">&times;</button>
-          </div>
-        </div>
-      )}
+  <div className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center">
+    <button
+      onClick={closeModal}
+      className="absolute top-4 right-4 text-white text-3xl z-50 hover:text-red-400"
+      aria-label="Fechar"
+    >
+      ×
+    </button>
+
+    <button
+      onClick={() =>
+        setSelectedIndex((i) => (i! - 1 + filteredPhotos.length) % filteredPhotos.length)
+      }
+      className="absolute left-4 top-1/2 -translate-y-1/2 text-white text-3xl z-50 p-2 rounded-full hover:bg-white/10"
+      aria-label="Anterior"
+    >
+      <FaArrowLeft />
+    </button>
+
+    <div className="max-w-[90vw] max-h-[90vh] relative">
+      <Image
+        src={filteredPhotos[selectedIndex].src}
+        alt={filteredPhotos[selectedIndex].alt}
+        width={filteredPhotos[selectedIndex].width}
+        height={filteredPhotos[selectedIndex].height}
+        className="object-contain max-h-[80vh] rounded-lg"
+      />
+      <div className="text-white text-center mt-2 text-sm">
+        {filteredPhotos[selectedIndex].alt}
+      </div>
+
+      {/* Ícones de compartilhamento */}
+      <div className="flex justify-center gap-4 mt-4">
+        <a
+          href={`https://www.facebook.com/sharer/sharer.php?u=${shareUrl(filteredPhotos[selectedIndex])}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-white hover:text-blue-500 text-xl"
+        >
+          <FaFacebook />
+        </a>
+        <a
+          href={`https://api.whatsapp.com/send?text=${shareUrl(filteredPhotos[selectedIndex])}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-white hover:text-green-400 text-xl"
+        >
+          <FaWhatsapp />
+        </a>
+        <a
+          href={`https://twitter.com/intent/tweet?url=${shareUrl(filteredPhotos[selectedIndex])}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-white hover:text-sky-400 text-xl"
+        >
+          <FaTwitter />
+        </a>
+      </div>
+    </div>
+
+    <button
+      onClick={() =>
+        setSelectedIndex((i) => (i! + 1) % filteredPhotos.length)
+      }
+      className="absolute right-4 top-1/2 -translate-y-1/2 text-white text-3xl z-50 p-2 rounded-full hover:bg-white/10"
+      aria-label="Próximo"
+    >
+      <FaArrowRight />
+    </button>
+  </div>
+)}
+
 
       
     </main>
